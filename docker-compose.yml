@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+  app:
+    container_name: application
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8095:8095
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - db
+    networks:
+      - localnetwork
+    env_file:
+      - .env
+
+  db:
+    image: postgres:12.1-alpine
+    container_name: app_db
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+    ports:
+      - 5432:5432
+    volumes:
+      #- ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - database-data:/var/lib/postgresql/data/
+    networks:
+      - localnetwork
+
+volumes:
+  api:
+  database-data:
+
+networks:
+  localnetwork:
+    driver: bridge
