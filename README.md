@@ -11,16 +11,16 @@ Initialization:
 * `docker-compose stop`
 * `docker-compose up -d`
 
-Stop/start
-`docker-compose up'
-`docker-compose stop`
+Stop/start:
+* `docker-compose up`
+* `docker-compose stop`
 
 For local development start only db:
 `docker-compose start db`
 
-test:
+Test:
 ```
 curl -H "Content-Type: application/json" -H "Source-Type: client" --request POST --data '{"state": "win", "amount": "12.5", "transactionId": "0a732c81-3a38-4641-aef4-a4971e7b45vx"}' http://127.0.0.1:8095/payment/new
 ```
 
-load test: /src/client/load_test.go
+Load test: /src/client/load_test.go
