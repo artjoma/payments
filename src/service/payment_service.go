@@ -11,7 +11,7 @@ import (
 	"time"
 )
 /**
-	For this application used float64 instead big.Float for money calc.
+	Payment service save & cancel operations
  */
 const(
 	lastTransactionsCount = 10
@@ -37,7 +37,7 @@ func NewPaymentService() *PaymentService{
 
 func (srv *PaymentService) destroy(){
 	for len(srv.requestQueue) > 0 {
-		time.Sleep(time.Millisecond * 200)
+		time.Sleep(time.Millisecond * 100)
 	}
 	srv.active = false
 	close(srv.requestQueue)
