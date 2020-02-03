@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"payments/src/api"
@@ -11,24 +9,31 @@ import (
 	"payments/src/service"
 	"runtime"
 	"syscall"
+
+	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
-	if os.Getenv("ENV_NAME") == ""{
+	if os.Getenv("ENV_NAME") == "" {
+		//for local development
+		os.Setenv("DB_HOST", "127.0.0.1")
 		//for development
 		fmt.Println("not found ENV_NAME key try expose env var from .env file")
 		if err := godotenv.Load(); err != nil {
-			panic(".env file not found")
+			if err := godotenv.Load("../.env"); err != nil {
+				panic(".env file not found")
+			}
 		}
 	}
 	//init logging
 	envName := os.Getenv("ENV_NAME")
-	if envName == "local"{
+	if envName == "local" {
 		log.SetFormatter(&log.TextFormatter{
 			TimestampFormat: "2006-01-02 15:04:05.00000",
-			FullTimestamp: true,
+			FullTimestamp:   true,
 		})
-	}else{
+	} else {
 		log.SetFormatter(&log.JSONFormatter{
 			TimestampFormat: "2006-01-02 15:04:05.00000",
 		})
@@ -36,7 +41,7 @@ func init() {
 	log.Infof("ENV: %s", envName)
 }
 
-func main(){
+func main() {
 	sigs := make(chan os.Signal, 1)
 	if runtime.GOOS != "windows" {
 		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -51,15 +56,15 @@ func main(){
 }
 
 // layers initialization ordering important !
-func createAppContext(){
+func createAppContext() {
 	//init data access layer
 	repo.InitRepo(
-			os.Getenv("APP_CONNECTION_POOL_SIZE"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_USER"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_NAME"))
+		os.Getenv("APP_CONNECTION_POOL_SIZE"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"))
 	//init services layer
 	service.InitService()
 	//init HTTP API layer

@@ -3,28 +3,30 @@ package repo
 import (
 	"context"
 	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 //shared variables
-var(
-	connPool 		*pgxpool.Pool
+var (
+	connPool        *pgxpool.Pool
 	transactionRepo *TransactionRepo
-	accountRepo		*AccountRepo
+	accountRepo     *AccountRepo
 )
 
 func InitRepo(maxConCount, port, host, user, password, dbName string) {
 	log.Info("start init repo")
 	connStr := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s pool_max_conns=%s",
 		user, password, host, port, dbName, maxConCount)
+	fmt.Println(connStr)
 	config, err := pgxpool.ParseConfig(connStr)
-	if err != nil{
+	if err != nil {
 		panic("invalid connection config parameters")
 	}
 	connPool, err = pgxpool.ConnectConfig(context.Background(), config)
-	if err != nil{
+	if err != nil {
 		panic("init DB connection err:" + err.Error())
 	}
 	transactionRepo = &TransactionRepo{}
@@ -38,12 +40,10 @@ func ShutdownRepo() {
 	log.Info("end shutdown pool")
 }
 
-func GetAccountRepo() *AccountRepo{
+func GetAccountRepo() *AccountRepo {
 	return accountRepo
 }
 
-func GetTransactionRepo() *TransactionRepo{
+func GetTransactionRepo() *TransactionRepo {
 	return transactionRepo
 }
-
-

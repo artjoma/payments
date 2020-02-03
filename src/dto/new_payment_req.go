@@ -6,8 +6,8 @@ import (
 )
 
 type PaymentReq struct {
-	State 		types.TxState	`json:"state"`
-	Amount 		*big.Float		`json:"amount"`
-	TxId		string			`json:"transactionId"`
-	SourceType 	types.TxSource	`json:"-"`
+	State      types.TxState  `json:"state", validate:"required"`
+	Amount     *big.Float     `json:"amount", validate:"required"`
+	TxId       string         `json:"transactionId", validate:"required"`
+	SourceType types.TxSource `json:"-"`
 }
